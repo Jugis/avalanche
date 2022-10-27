@@ -30,15 +30,7 @@ import (
 )
 
 var (
-	metricCount         = kingpin.Flag("metric-count", "Number of metrics to serve.").Default("500").Int()
-	labelCount          = kingpin.Flag("label-count", "Number of labels per-metric.").Default("10").Int()
-	seriesCount         = kingpin.Flag("series-count", "Number of series per-metric.").Default("10").Int()
-	metricLength        = kingpin.Flag("metricname-length", "Modify length of metric names.").Default("5").Int()
-	labelLength         = kingpin.Flag("labelname-length", "Modify length of label names.").Default("5").Int()
-	constLabels         = kingpin.Flag("const-label", "Constant label to add to every metric. Format is labelName=labelValue. Flag can be specified multiple times.").Strings()
 	valueInterval       = kingpin.Flag("value-interval", "Change series values every {interval} seconds.").Default("30").Int()
-	labelInterval       = kingpin.Flag("series-interval", "Change series_id label values every {interval} seconds.").Default("60").Int()
-	metricInterval      = kingpin.Flag("metric-interval", "Change __name__ label values every {interval} seconds.").Default("120").Int()
 	port                = kingpin.Flag("port", "Port to serve at").Default("9001").Int()
 	remoteURL           = kingpin.Flag("remote-url", "URL to send samples via remote_write API.").URL()
 	remotePprofURLs     = kingpin.Flag("remote-pprof-urls", "a list of urls to download pprofs during the remote write: --remote-pprof-urls=http://127.0.0.1:10902/debug/pprof/heap --remote-pprof-urls=http://127.0.0.1:10902/debug/pprof/profile").URLList()
@@ -49,6 +41,10 @@ var (
 	remoteTenant        = kingpin.Flag("remote-tenant", "Tenant ID to include in remote_write send").Default("0").String()
 	tlsClientInsecure   = kingpin.Flag("tls-client-insecure", "Skip certificate check on tls connection").Default("false").Bool()
 	remoteTenantHeader  = kingpin.Flag("remote-tenant-header", "Tenant ID to include in remote_write send. The default, is the default tenant header expected by Cortex.").Default("X-Scope-OrgID").String()
+	topicCount          = kingpin.Flag("topic-count", "Topic Count").Default("10").Int()
+	partitionPerTopic   = kingpin.Flag("partition-per-topic", "Partition Per Topic").Default("3").Int()
+	producerPerTopic    = kingpin.Flag("producer-per-topic", "Producer Per Topic").Default("1").Int()
+	groupCount          = kingpin.Flag("group-count", "Group Count").Default("5").Int()
 )
 
 func main() {
@@ -59,7 +55,7 @@ func main() {
 
 	stop := make(chan struct{})
 	defer close(stop)
-	updateNotify, err := metrics.RunMetrics(*metricCount, *labelCount, *seriesCount, *metricLength, *labelLength, *valueInterval, *labelInterval, *metricInterval, *constLabels, stop)
+	updateNotify, err := metrics.RunMetrics(*topicCount, *partitionPerTopic, *producerPerTopic, *groupCount, *valueInterval, stop)
 	if err != nil {
 		log.Fatal(err)
 	}
