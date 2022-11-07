@@ -42,50 +42,50 @@ func registerKafkaMetrics() {
 	// Metrics with topic cardinality
 	topicMetrics = make([]*prometheus.GaugeVec, 6)
 	topicIdx := 0
-	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_bytesinpersec_total", "Topic BytesInPerSec Count", []string{"topic"})
+	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_bytesinpersec_total", "Topic BytesInPerSec Count", []string{"instance", "topic"})
 	topicIdx++
-	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_bytesoutpersec_total", "Topic BytesOutPerSec Count", []string{"topic"})
+	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_bytesoutpersec_total", "Topic BytesOutPerSec Count", []string{"instance", "topic"})
 	topicIdx++
-	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_messagesinpersec_total", "Topic MessagesInPerSec Count", []string{"topic"})
+	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_messagesinpersec_total", "Topic MessagesInPerSec Count", []string{"instance", "topic"})
 	topicIdx++
-	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_bytesinpersec_fifteenminuterate", "Topic BytesInPerSec 15min Rate", []string{"topic"})
+	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_bytesinpersec_fifteenminuterate", "Topic BytesInPerSec 15min Rate", []string{"instance", "topic"})
 	topicIdx++
-	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_bytesoutpersec_fifteenminuterate", "Topic BytesOutPerSec 15min Rate", []string{"topic"})
+	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_bytesoutpersec_fifteenminuterate", "Topic BytesOutPerSec 15min Rate", []string{"instance", "topic"})
 	topicIdx++
-	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_messagesinpersec_fifteenminuterate", "Topic MessagesInPerSec 15min Rate", []string{"topic"})
+	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_messagesinpersec_fifteenminuterate", "Topic MessagesInPerSec 15min Rate", []string{"instance", "topic"})
 
 	// Metrics with topic x partition cardinality
 	partitionMetrics = make([]*prometheus.GaugeVec, 9)
 	partitionIdx := 0
-	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_messagesinpersec_total", "Topic Partition MessagesInPerSec Count", []string{"topic", "partition"})
+	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_messagesinpersec_total", "Topic Partition MessagesInPerSec Count", []string{"instance", "topic", "partition"})
 	partitionIdx++
-	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_bytesinpersec_total", "Topic Partition BytesInPerSec Count", []string{"topic", "partition"})
+	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_bytesinpersec_total", "Topic Partition BytesInPerSec Count", []string{"instance", "topic", "partition"})
 	partitionIdx++
-	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_bytesoutpersec_total", "Topic Partition BytesOutPerSec Count", []string{"topic", "partition"})
+	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_bytesoutpersec_total", "Topic Partition BytesOutPerSec Count", []string{"instance", "topic", "partition"})
 	partitionIdx++
-	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_bytesinpersec_fifteenminuterate", "Topic Partition BytesInPerSec 15min Rate", []string{"topic", "partition"})
+	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_bytesinpersec_fifteenminuterate", "Topic Partition BytesInPerSec 15min Rate", []string{"instance", "topic", "partition"})
 	partitionIdx++
-	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_bytesoutpersec_fifteenminuterate", "Topic Partition BytesOutPerSec 15min Rate", []string{"topic", "partition"})
+	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_bytesoutpersec_fifteenminuterate", "Topic Partition BytesOutPerSec 15min Rate", []string{"instance", "topic", "partition"})
 	partitionIdx++
-	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_messagesinpersec_fifteenminuterate", "Topic Partition MessagesInPerSec 15min Rate", []string{"topic", "partition"})
+	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_messagesinpersec_fifteenminuterate", "Topic Partition MessagesInPerSec 15min Rate", []string{"instance", "topic", "partition"})
 	partitionIdx++
-	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_replicascount", "Topic Partition ReplicasCount", []string{"topic", "partition"})
+	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_replicascount", "Topic Partition ReplicasCount", []string{"instance", "topic", "partition"})
 	partitionIdx++
-	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_insyncreplicascount", "Topic Partition InSyncReplicasCount", []string{"topic", "partition"})
+	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_insyncreplicascount", "Topic Partition InSyncReplicasCount", []string{"instance", "topic", "partition"})
 	partitionIdx++
-	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_underreplicated", "Topic Partition UnderReplicated", []string{"topic", "partition"})
+	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_underreplicated", "Topic Partition UnderReplicated", []string{"instance", "topic", "partition"})
 
 	// Metrics with group cardinality
 	groupMetrics = make([]*prometheus.GaugeVec, 2)
 	groupIdx := 0
-	groupMetrics[groupIdx] = registerKafkaGaugeMetrics("group_committed_offset", "Group Committed Offset", []string{"group"})
+	groupMetrics[groupIdx] = registerKafkaGaugeMetrics("group_committed_offset", "Group Committed Offset", []string{"instance", "group"})
 	groupIdx++
-	groupMetrics[groupIdx] = registerKafkaGaugeMetrics("group_lag", "Group Lag", []string{"group"})
+	groupMetrics[groupIdx] = registerKafkaGaugeMetrics("group_lag", "Group Lag", []string{"instance", "group"})
 
 	// Metrics with topic x producer cardinality
 	producerMetrics = make([]*prometheus.GaugeVec, 1)
 	producerIdx := 0
-	producerMetrics[producerIdx] = registerKafkaGaugeMetrics("broker_producer_messagesinpersec_total", "Producer MessagesInPerSec Count", []string{"topic", "clientId"})
+	producerMetrics[producerIdx] = registerKafkaGaugeMetrics("broker_producer_messagesinpersec_total", "Producer MessagesInPerSec Count", []string{"instance", "topic", "clientId"})
 
 	metrics = append(append(append(topicMetrics, partitionMetrics...), groupMetrics...), producerMetrics...)
 }
@@ -139,10 +139,10 @@ func deleteValues(labelKeys, labelValues []string, seriesCount, seriesCycle int)
 	}
 }
 
-func cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCount int) {
+func cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCount int, instanceLabel string) {
 	for _, metric := range topicMetrics {
 		for idx := 0; idx < topicCount; idx++ {
-			labels := prometheus.Labels{"topic": fmt.Sprintf("topic_%v", idx)}
+			labels := prometheus.Labels{"instance": instanceLabel, "topic": fmt.Sprintf("topic_%v", idx)}
 			metric.With(labels).Set(float64(valGenerator.Intn(100)))
 		}
 	}
@@ -150,7 +150,7 @@ func cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCoun
 	for _, metric := range partitionMetrics {
 		for topicIdx := 0; topicIdx < topicCount; topicIdx++ {
 			for partitionIdx := 0; partitionIdx < partitionPerTopic; partitionIdx++ {
-				labels := prometheus.Labels{"topic": fmt.Sprintf("topic_%v", topicIdx), "partition": fmt.Sprintf("partition_%v", partitionIdx)}
+				labels := prometheus.Labels{"instance": instanceLabel, "topic": fmt.Sprintf("topic_%v", topicIdx), "partition": fmt.Sprintf("partition_%v", partitionIdx)}
 				metric.With(labels).Set(float64(valGenerator.Intn(100)))
 			}
 		}
@@ -158,7 +158,7 @@ func cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCoun
 
 	for _, metric := range groupMetrics {
 		for idx := 0; idx < groupCount; idx++ {
-			labels := prometheus.Labels{"group": fmt.Sprintf("group_%v", idx)}
+			labels := prometheus.Labels{"instance": instanceLabel, "group": fmt.Sprintf("group_%v", idx)}
 			metric.With(labels).Set(float64(valGenerator.Intn(100)))
 		}
 	}
@@ -167,7 +167,7 @@ func cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCoun
 	for _, metric := range producerMetrics {
 		for topicIdx := 0; topicIdx < topicCount; topicIdx++ {
 			for producers := 0; producers < producerPerTopic; producers++ {
-				labels := prometheus.Labels{"topic": fmt.Sprintf("topic_%v", topicIdx), "clientId": fmt.Sprintf("producer_%v", producerIdx)}
+				labels := prometheus.Labels{"instance": instanceLabel, "topic": fmt.Sprintf("topic_%v", topicIdx), "clientId": fmt.Sprintf("producer_%v", producerIdx)}
 				metric.With(labels).Set(float64(valGenerator.Intn(100)))
 			}
 		}
@@ -175,9 +175,9 @@ func cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCoun
 }
 
 // RunMetrics creates a set of Prometheus test series that update over time
-func RunMetrics(topicCount, partitionPerTopic, producerPerTopic, groupCount, valueInterval int, stop chan struct{}) (chan struct{}, error) {
+func RunMetrics(topicCount, partitionPerTopic, producerPerTopic, groupCount, valueInterval int, instanceLabel string, stop chan struct{}) (chan struct{}, error) {
 	registerKafkaMetrics()
-	cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCount)
+	cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCount, instanceLabel)
 	valueTick := time.NewTicker(time.Duration(valueInterval) * time.Second)
 	updateNotify := make(chan struct{}, 1)
 
@@ -185,7 +185,7 @@ func RunMetrics(topicCount, partitionPerTopic, producerPerTopic, groupCount, val
 		for tick := range valueTick.C {
 			fmt.Printf("%v: refreshing metric values\n", tick)
 			metricsMux.Lock()
-			cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCount)
+			cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCount, instanceLabel)
 			metricsMux.Unlock()
 			select {
 			case updateNotify <- struct{}{}:
