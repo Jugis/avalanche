@@ -55,10 +55,8 @@ func registerKafkaMetrics() {
 	topicMetrics[topicIdx] = registerKafkaGaugeMetrics("topic_messagesinpersec_fifteenminuterate", "Topic MessagesInPerSec 15min Rate", []string{"instance", "topic"})
 
 	// Metrics with topic x partition cardinality
-	partitionMetrics = make([]*prometheus.GaugeVec, 9)
+	partitionMetrics = make([]*prometheus.GaugeVec, 8)
 	partitionIdx := 0
-	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_messagesinpersec_total", "Topic Partition MessagesInPerSec Count", []string{"instance", "topic", "partition"})
-	partitionIdx++
 	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_bytesinpersec_total", "Topic Partition BytesInPerSec Count", []string{"instance", "topic", "partition"})
 	partitionIdx++
 	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_bytesoutpersec_total", "Topic Partition BytesOutPerSec Count", []string{"instance", "topic", "partition"})
@@ -150,7 +148,7 @@ func cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCoun
 	for _, metric := range partitionMetrics {
 		for topicIdx := 0; topicIdx < topicCount; topicIdx++ {
 			for partitionIdx := 0; partitionIdx < partitionPerTopic; partitionIdx++ {
-				labels := prometheus.Labels{"instance": instanceLabel, "topic": fmt.Sprintf("topic_%v", topicIdx), "partition": fmt.Sprintf("partition_%v", partitionIdx)}
+				labels := prometheus.Labels{"instance": instanceLabel, "topic": fmt.Sprintf("topic_%v", topicIdx), "partition": fmt.Sprintf("%v", partitionIdx)}
 				metric.With(labels).Set(float64(valGenerator.Intn(100)))
 			}
 		}
