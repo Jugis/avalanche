@@ -46,6 +46,9 @@ var (
 	producerPerTopic    = kingpin.Flag("producer-per-topic", "Producer Per Topic").Default("1").Int()
 	groupCount          = kingpin.Flag("group-count", "Group Count").Default("5").Int()
 	instanceLabel       = kingpin.Flag("instance-label", "Instance Label").String()
+	topicStartingNumber = kingpin.Flag("topic-staring-number", "Topic Name starting index").Default("0").Int()
+	groupStartingNumber = kingpin.Flag("group-staring-number", "Group Name starting index").Default("0").Int()
+	replicationFactor   = kingpin.Flag("replication-factor", "Replication factor of topics").Default("2").Int()
 )
 
 func main() {
@@ -56,7 +59,7 @@ func main() {
 
 	stop := make(chan struct{})
 	defer close(stop)
-	updateNotify, err := metrics.RunMetrics(*topicCount, *partitionPerTopic, *producerPerTopic, *groupCount, *valueInterval, *instanceLabel, stop)
+	updateNotify, err := metrics.RunMetrics(*replicationFactor, *topicStartingNumber, *groupStartingNumber, *topicCount, *partitionPerTopic, *producerPerTopic, *groupCount, *valueInterval, *instanceLabel, stop)
 	if err != nil {
 		log.Fatal(err)
 	}

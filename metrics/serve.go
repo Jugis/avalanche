@@ -34,6 +34,7 @@ var (
 	partitionMetrics = make([]*prometheus.GaugeVec, 0)
 	groupMetrics     = make([]*prometheus.GaugeVec, 0)
 	producerMetrics  = make([]*prometheus.GaugeVec, 0)
+	replicaMetrics   = make([]*prometheus.GaugeVec, 0)
 	metricsMux       = &sync.Mutex{}
 )
 
@@ -72,6 +73,10 @@ func registerKafkaMetrics() {
 	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_insyncreplicascount", "Topic Partition InSyncReplicasCount", []string{"instance", "topic", "partition"})
 	partitionIdx++
 	partitionMetrics[partitionIdx] = registerKafkaGaugeMetrics("topic_partition_underreplicated", "Topic Partition UnderReplicated", []string{"instance", "topic", "partition"})
+
+	// Metrics with topic x partition x replication-factor cardinality
+	replicaMetrics = make([]*prometheus.GaugeVec, 1)
+	replicaMetrics[0] = registerKafkaGaugeMetrics("size", "Kafka Replica Size Gauge", []string{"instance", "topic", "partition", "replica"})
 
 	// Metrics with group cardinality
 	groupMetrics = make([]*prometheus.GaugeVec, 2)
@@ -137,16 +142,16 @@ func deleteValues(labelKeys, labelValues []string, seriesCount, seriesCycle int)
 	}
 }
 
-func cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCount int, instanceLabel string) {
+func cycleKafkaValues(replicationFactor, topicStartingNumber, groupStartingNumber, topicCount, partitionPerTopic, producerPerTopic, groupCount int, instanceLabel string) {
 	for _, metric := range topicMetrics {
-		for idx := 0; idx < topicCount; idx++ {
+		for idx := topicStartingNumber; idx < topicStartingNumber+topicCount; idx++ {
 			labels := prometheus.Labels{"instance": instanceLabel, "topic": fmt.Sprintf("topic_%v", idx)}
 			metric.With(labels).Set(float64(valGenerator.Intn(100)))
 		}
 	}
 
 	for _, metric := range partitionMetrics {
-		for topicIdx := 0; topicIdx < topicCount; topicIdx++ {
+		for topicIdx := topicStartingNumber; topicIdx < topicStartingNumber+topicCount; topicIdx++ {
 			for partitionIdx := 0; partitionIdx < partitionPerTopic; partitionIdx++ {
 				labels := prometheus.Labels{"instance": instanceLabel, "topic": fmt.Sprintf("topic_%v", topicIdx), "partition": fmt.Sprintf("%v", partitionIdx)}
 				metric.With(labels).Set(float64(valGenerator.Intn(100)))
@@ -155,9 +160,20 @@ func cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCoun
 	}
 
 	for _, metric := range groupMetrics {
-		for idx := 0; idx < groupCount; idx++ {
+		for idx := groupStartingNumber; idx < groupStartingNumber+groupCount; idx++ {
 			labels := prometheus.Labels{"instance": instanceLabel, "group": fmt.Sprintf("group_%v", idx)}
 			metric.With(labels).Set(float64(valGenerator.Intn(100)))
+		}
+	}
+
+	for _, metric := range replicaMetrics {
+		for topicIdx := topicStartingNumber; topicIdx < topicStartingNumber+topicCount; topicIdx++ {
+			for partitionIdx := 0; partitionIdx < partitionPerTopic; partitionIdx++ {
+				for replicaNumber := 1; replicaNumber <= replicationFactor; replicaNumber++ {
+					labels := prometheus.Labels{"instance": instanceLabel, "topic": fmt.Sprintf("topic_%v", topicIdx), "partition": fmt.Sprintf("%v", partitionIdx), "replica": fmt.Sprint(replicaNumber)}
+					metric.With(labels).Set(float64(valGenerator.Intn(100)))
+				}
+			}
 		}
 	}
 
@@ -173,9 +189,9 @@ func cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCoun
 }
 
 // RunMetrics creates a set of Prometheus test series that update over time
-func RunMetrics(topicCount, partitionPerTopic, producerPerTopic, groupCount, valueInterval int, instanceLabel string, stop chan struct{}) (chan struct{}, error) {
+func RunMetrics(replicationFactor, topicStartingNumber, groupStartingNumber, topicCount, partitionPerTopic, producerPerTopic, groupCount, valueInterval int, instanceLabel string, stop chan struct{}) (chan struct{}, error) {
 	registerKafkaMetrics()
-	cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCount, instanceLabel)
+	cycleKafkaValues(replicationFactor, topicStartingNumber, groupStartingNumber, topicCount, partitionPerTopic, producerPerTopic, groupCount, instanceLabel)
 	valueTick := time.NewTicker(time.Duration(valueInterval) * time.Second)
 	updateNotify := make(chan struct{}, 1)
 
@@ -183,7 +199,7 @@ func RunMetrics(topicCount, partitionPerTopic, producerPerTopic, groupCount, val
 		for tick := range valueTick.C {
 			fmt.Printf("%v: refreshing metric values\n", tick)
 			metricsMux.Lock()
-			cycleKafkaValues(topicCount, partitionPerTopic, producerPerTopic, groupCount, instanceLabel)
+			cycleKafkaValues(replicationFactor, topicStartingNumber, groupStartingNumber, topicCount, partitionPerTopic, producerPerTopic, groupCount, instanceLabel)
 			metricsMux.Unlock()
 			select {
 			case updateNotify <- struct{}{}:
